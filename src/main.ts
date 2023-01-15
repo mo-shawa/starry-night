@@ -1,6 +1,5 @@
 import "./style.css"
 import * as THREE from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import fragmentShader from "./shaders/fragment.glsl?raw"
@@ -37,7 +36,7 @@ window.addEventListener("resize", () => {
 const camera = new THREE.PerspectiveCamera(
 	75,
 	sizes.width / sizes.height,
-	0.0001,
+	0.1,
 	100
 )
 
@@ -52,7 +51,6 @@ scene.add(camera)
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer()
-renderer.setClearColor("teal")
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.domElement.classList.add("webgl")
@@ -65,8 +63,9 @@ const parameters = {
 	branches: 6,
 	spin: 1,
 	randomness: 0.6,
-	insideColor: "#60a2ff",
-	outsideColor: "#fff4a4",
+	insideColor: "#ffffff",
+	outsideColor: "#35ffee",
+	swirlRatio: 400,
 }
 
 /**
@@ -143,7 +142,9 @@ const clock = new THREE.Clock()
 const tick = () => {
 	const elapsedTime = clock.getElapsedTime()
 
-	pointsMaterial.uniforms.uTime.value = (300 + elapsedTime) / 50
+	pointsMaterial.uniforms.uTime.value =
+		(500 + elapsedTime) / parameters.swirlRatio
+	camera.lookAt(points.position)
 
 	renderer.render(scene, camera)
 
@@ -160,12 +161,19 @@ ScrollTrigger.defaults({
 
 const galaxyTimeline = gsap.timeline({
 	scrollTrigger: {
-		trigger: "#app",
+		trigger: ".section-one",
 		start: "top top",
-		endTrigger: "#app",
+		endTrigger: ".section-three",
 		end: "bottom bottom",
 		scrub: 1,
 	},
 })
 
-galaxyTimeline.to(points.rotation, { z: 1 })
+galaxyTimeline
+	.to(points.rotation, { z: 0.3, ease: "expo.out" })
+	.from(
+		pointsMaterial.uniforms.uSize,
+		{ value: 0 * renderer.getPixelRatio() },
+		0
+	)
+	.to(parameters, { swirlRatio: 50 }, 0)
