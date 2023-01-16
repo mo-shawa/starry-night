@@ -14,12 +14,15 @@
 
 body{
     font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
 }
 
 .webgl{
     position:fixed;
     left: 0;
     top: 0;
+    bottom: 0;
+    bottom: env(safe-area-inset-bottom);
     z-index: -5;
     height: 100%;
 }
