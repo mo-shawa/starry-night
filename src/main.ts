@@ -168,12 +168,32 @@ const galaxyTimeline = gsap.timeline({
 	},
 })
 
-galaxyTimeline
-	.to(points.rotation, { z: 0.3, ease: "expo.out" }, 0)
-	.from(
-		pointsMaterial.uniforms.uSize,
-		{ value: 0 * renderer.getPixelRatio() },
-		0
-	)
-	.to(parameters, { swirlRatio: 2, ease: "expo" }, 0)
-	.to(camera.position, { y: 2, x: -1 }, 0)
+function desktopAnimation() {
+	galaxyTimeline
+		.to(points.rotation, { z: 0.3, ease: "expo.out" }, 0)
+		.from(
+			pointsMaterial.uniforms.uSize,
+			{ value: 0 * renderer.getPixelRatio() },
+			0
+		)
+		.to(parameters, { swirlRatio: 2, ease: "expo" }, 0)
+		.to(camera.position, { y: 2, x: -1 }, 0)
+}
+
+function mobileAnimation() {
+	galaxyTimeline
+		.to(points.rotation, { z: 0.3, ease: "expo.out" }, 0)
+		.from(
+			pointsMaterial.uniforms.uSize,
+			{ value: 1 * renderer.getPixelRatio() },
+			0
+		)
+		.to(parameters, { swirlRatio: 2, ease: "expo" }, 0)
+		.to(camera.position, { y: 2, x: -1 }, 0)
+}
+
+if ("ontouchstart" in document.documentElement) {
+	mobileAnimation()
+} else {
+	desktopAnimation()
+}
