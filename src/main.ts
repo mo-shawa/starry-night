@@ -143,7 +143,7 @@ const tick = () => {
 	const elapsedTime = clock.getElapsedTime()
 
 	pointsMaterial.uniforms.uTime.value =
-		(100 + elapsedTime) / parameters.swirlRatio
+		(400 + elapsedTime) / parameters.swirlRatio
 
 	renderer.render(scene, camera)
 
@@ -163,17 +163,17 @@ const galaxyTimeline = gsap.timeline({
 		trigger: ".section-one",
 		start: "top top",
 		endTrigger: ".section-three",
-		end: "bottom bottom",
+		end: "bottom 0%",
 		scrub: 1,
 	},
 })
 
 galaxyTimeline
-	// .to(points.rotation, { z: 0.3, ease: "expo.out" }, 0)
+	.to(points.rotation, { z: 0.3, ease: "expo.out" }, 0)
 	.from(
 		pointsMaterial.uniforms.uSize,
 		{ value: 0 * renderer.getPixelRatio() },
 		0
 	)
-	.to(parameters, { swirlRatio: 2 }, 0)
+	.to(parameters, { swirlRatio: 2, ease: "expo" }, 0)
 	.to(camera.position, { y: 2, x: -1 }, 0)
