@@ -57,15 +57,15 @@ renderer.domElement.classList.add("webgl")
 document.getElementById("app")?.prepend(renderer.domElement)
 
 const parameters = {
-	count: 10000,
+	count: 180000,
 	size: 0.005,
-	radius: 0.5,
+	radius: 1.5,
 	branches: 6,
 	spin: 1,
-	randomness: 0.6,
+	randomness: 0.9,
 	insideColor: "#ffffff",
 	outsideColor: "#35ffee",
-	swirlRatio: 400,
+	swirlRatio: 800,
 }
 
 /**
@@ -143,8 +143,7 @@ const tick = () => {
 	const elapsedTime = clock.getElapsedTime()
 
 	pointsMaterial.uniforms.uTime.value =
-		(500 + elapsedTime) / parameters.swirlRatio
-	camera.lookAt(points.position)
+		(400 + elapsedTime) / parameters.swirlRatio
 
 	renderer.render(scene, camera)
 
@@ -164,16 +163,37 @@ const galaxyTimeline = gsap.timeline({
 		trigger: ".section-one",
 		start: "top top",
 		endTrigger: ".section-three",
-		end: "bottom bottom",
+		end: "bottom 0%",
 		scrub: 1,
 	},
 })
 
-galaxyTimeline
-	.to(points.rotation, { z: 0.3, ease: "expo.out" })
-	.from(
-		pointsMaterial.uniforms.uSize,
-		{ value: 0 * renderer.getPixelRatio() },
-		0
-	)
-	.to(parameters, { swirlRatio: 50 }, 0)
+function desktopAnimation() {
+	galaxyTimeline
+		.to(points.rotation, { z: 0.3, ease: "expo.out" }, 0)
+		.from(
+			pointsMaterial.uniforms.uSize,
+			{ value: 0 * renderer.getPixelRatio() },
+			0
+		)
+		.to(parameters, { swirlRatio: 2, ease: "expo" }, 0)
+		.to(camera.position, { y: 2, x: -1 }, 0)
+}
+
+function mobileAnimation() {
+	galaxyTimeline
+		.to(points.rotation, { z: 0.3, ease: "expo.out" }, 0)
+		.from(
+			pointsMaterial.uniforms.uSize,
+			{ value: 1 * renderer.getPixelRatio() },
+			0
+		)
+		.to(parameters, { swirlRatio: 2, ease: "expo" }, 0)
+		.to(camera.position, { y: 2, x: -1 }, 0)
+}
+
+if ("ontouchstart" in document.documentElement) {
+	mobileAnimation()
+} else {
+	desktopAnimation()
+}
